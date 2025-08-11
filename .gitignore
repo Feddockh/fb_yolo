@@ -1,0 +1,8 @@
+/old_datasets
+/runs
+rtdetr*
+yolo*
+rivendale_v4*
+.vscode
+__pycache__/
+.env
