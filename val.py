@@ -1,27 +1,31 @@
 #!/usr/bin/env python3
+import torch
 from ultralytics import YOLO
+import ultralytics.nn
+from torch.nn.modules.container import Sequential
 
-def test_yolov8(
-    model_cfg: str = "runs/train/yolov8_fireblight_large_remapped/weights/best.pt",
-    data_cfg:  str = "batch_1_remapped/data.yaml",
-    imgsz:     tuple = (1088, 1440)
+def validate_yolov8(
+    model_cfg: str = "runs/train/yolov8_large_rivendale_v4_remapped/weights/best.pt",
+    data_cfg:  str = "rivendale_v4_remapped/data.yaml",
+    name:      str = "yolov8_large_rivendale_v4_remapped"
 ):
     model = YOLO(model_cfg)
 
-    # Run evaluation on the test set defined in data.yaml
-    metrics = model.val(
-        data = data_cfg,
-        split = "test",
-        imgsz = imgsz,
+    # Run validation
+    model.val(
+        data        = data_cfg,
+        imgsz       = (1088, 1440),
+        batch       = 2,
+        workers     = 8,
+        conf        = 0.25,   # NMS confidence threshold
+        iou         = 0.60,   # NMS IoU threshold
+        max_det     = 300,    # Max detections per image
+        agnostic_nms= False,  # Per-class NMS
+        plots       = True,   # Save PR/confusion matrix plots
+        save_json   = False,  # Save COCO-format JSON (optional)
+        verbose     = True,
+        name        = name,
     )
 
-    # class_index = metrics.names.index("Shepherd's Crook")  # or your target class
-
-    # map50_for_target = metrics.box.map50_per_class[class_index]
-    # print(f"mAP@0.5 for 'Shepherd's Crook': {map50_for_target:.3f}")
-
-    # Optional: Print or save results
-    print(metrics)
-
 if __name__ == "__main__":
-    test_yolov8()
+    validate_yolov8()

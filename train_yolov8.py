@@ -13,7 +13,6 @@ def train_yolov8(
     model = YOLO(model_cfg)
     # model = YOLO("runs/train/yolov8_fireblight_large_uniques_remapped/weights/last.pt")
 
-    # Train the model
     model.train(
         data        = data_cfg,
         epochs      = 200,
@@ -21,12 +20,11 @@ def train_yolov8(
         # imgsz       = (216, 409), # For Ximea camera (demosaic)
         # imgsz       = (1088, 2048), # For Ximea camera
         batch       = 2,
-        # patience    = 20,  # Reduced from 30 - stop earlier if no improvement
+        patience    = 200,
         lr0         = 0.01,
         lrf         = 0.01,
-        # dropout     = 0.2,  # Increased dropout to reduce overfitting
+        # dropout     = 0.2,  # Increase dropout to prevent overfitting
         augment     = True,
-        # Enhanced data augmentation to prevent overfitting
         # hsv_h       = 0.015,  # Hue augmentation
         # hsv_s       = 0.7,    # Saturation augmentation  
         # hsv_v       = 0.4,    # Value augmentation
@@ -48,7 +46,11 @@ def train_yolov8(
         name        = name,
         exist_ok    = True,
         # resume      = True,
-        
+        plots       = True,
+
+        iou         = 0.6,
+        conf        = 0.1,
+        nms         = True
     )
 
 if __name__ == "__main__":
