@@ -18,7 +18,7 @@ def validate_yolov8(
         batch       = 2,
         workers     = 8,
         conf        = 0.25,   # NMS confidence threshold
-        iou         = 0.60,   # NMS IoU threshold
+        iou         = 0.20,   # NMS IoU threshold
         max_det     = 300,    # Max detections per image
         agnostic_nms= False,  # Per-class NMS
         plots       = True,   # Save PR/confusion matrix plots

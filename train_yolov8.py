@@ -8,10 +8,10 @@ def train_yolov8(
     model_cfg: str = "yolov8l.pt",
     data_cfg:  str = "rivendale_v4_remapped/data.yaml",
     project:   str = "runs/train",
-    name:      str = "yolov8_large_rivendale_v4_remapped",
+    name:      str = "yolov8_large_rivendale_v4_remapped2",
 ):
-    model = YOLO(model_cfg)
-    # model = YOLO("runs/train/yolov8_fireblight_large_uniques_remapped/weights/last.pt")
+    # model = YOLO(model_cfg)
+    model = YOLO(f"runs/train/{name}/weights/last.pt")
 
     model.train(
         data        = data_cfg,
@@ -45,7 +45,7 @@ def train_yolov8(
         project     = project,
         name        = name,
         exist_ok    = True,
-        # resume      = True,
+        resume      = True,
         plots       = True,
 
         iou         = 0.6,
