@@ -31,7 +31,7 @@ def train_yolov8(
         patience    = 200,
         lr0         = 0.01,
         lrf         = 0.01,
-        # dropout     = 0.2,  # Increase dropout to prevent overfitting
+        dropout     = 0.2,  # Increase dropout to prevent overfitting
         augment     = True,
         hsv_h       = 0.0,  # Hue augmentation
         hsv_s       = 0.0,    # Saturation augmentation  
@@ -39,16 +39,16 @@ def train_yolov8(
         degrees     = 15.0,   # Random rotation
         translate   = 0.1,    # Random translation
         scale       = 0.5,    # Random scaling
-        # shear       = 2.0,    # Random shear
-        # perspective = 0.0002, # Perspective transformation
+        shear       = 2.0,    # Random shear
+        perspective = 0.0002, # Perspective transformation
         flipud      = 0.0,    # Vertical flip probability
         fliplr      = 0.5,    # Horizontal flip probability
-        mosaic      = 0.0,    # Keep mosaic augmentation
-        # mixup       = 0.15,   # Add mixup augmentation
-        # copy_paste  = 0.3,    # Add copy-paste augmentation
+        mosaic      = 1.0,    # Keep mosaic augmentation
+        mixup       = 0.0,    # Add mixup augmentation
+        copy_paste  = 0.0,    # Add copy-paste augmentation
         # Regularization parameters
-        # weight_decay = 0.0005, # L2 regularization
-        # warmup_epochs = 3.0,   # Gradual learning rate warmup
+        weight_decay = 0.0005, # L2 regularization
+        warmup_epochs = 3.0,   # Gradual learning rate warmup
         cos_lr      = True,    # Cosine learning rate scheduler
         project     = project,
         name        = name,

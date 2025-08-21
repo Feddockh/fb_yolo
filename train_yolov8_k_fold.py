@@ -35,25 +35,27 @@ from ultralytics import YOLO
 # ========================
 # CONFIG (edit these)
 # ========================
-ROOT_DIR        = "rivendale_v4_k_fold"        # contains images/, labels/, folds/
-FOLDS_DIR       = "folds"                        # relative to ROOT_DIR
-BASE_DATA_YAML  = "rivendale_v4_k_fold/data.yaml"       # must contain your 'names' list
-MODEL_CFG       = "yolov8l.pt"                   # or a custom .pt/.yaml
-PROJECT         = "runs/train"                    # Ultralytics project dir
-RUN_NAME        = "yolov8_large_rivendale_v4_k"         # base name; script appends _foldX
+DATASET_DIR     = "datasets"
+ROOT_DIR        = os.path.join(DATASET_DIR, "rivendale_v5_k_fold")  # contains images/, labels/, folds/
+FOLDS_DIR       = "folds"                                # relative to ROOT_DIR
+BASE_DATA_YAML  = os.path.join(ROOT_DIR, "data.yaml")    # must contain your 'names' list
+MODEL_DIR       = "models"
+MODEL_CFG       = os.path.join(MODEL_DIR, "yolov8l.pt")  # or a custom .pt/.yaml
+PROJECT         = "runs/train"                           # Ultralytics project dir
+RUN_NAME        = "yolov8_large_rivendale_v5_k"          # base name; script appends _foldX
 
 # Training knobs (match your style)
-EPOCHS          = 1
+EPOCHS          = 100
 IMGSZ           = (1088, 1440)
 BATCH           = 2
 PATIENCE        = 20
 LR0             = 0.01
 LRF             = 0.01
-# DROPOUT         = 0.20
+DROPOUT         = 0.20
 AUGMENT         = True
-# HSV_H           = 0.015
-# HSV_S           = 0.7
-# HSV_V           = 0.4
+HSV_H           = 0.0
+HSV_S           = 0.0
+HSV_V           = 0.0
 DEGREES         = 15.0
 TRANSLATE       = 0.1
 SCALE           = 0.5
@@ -61,7 +63,7 @@ SHEAR           = 2.0
 PERSPECTIVE     = 0.0002
 FLIPUD          = 0.0
 FLIPLR          = 0.5
-# MOSAIC          = 1.0
+MOSAIC          = 1.0
 # MIXUP           = 0.15
 # WEIGHT_DECAY    = 0.0005
 WARMUP_EPOCHS   = 3.0
@@ -69,7 +71,7 @@ COS_LR          = True
 
 # Inference/val-time NMS knobs (affect validation metrics, not training loss)
 CONF_THRESH     = 0.1
-IOU_NMS         = 0.60
+IOU_NMS         = 0.3
 MAX_DET         = 300
 AGNOSTIC_NMS    = False
 
