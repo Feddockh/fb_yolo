@@ -8,14 +8,14 @@ from torch.nn.modules.container import Sequential
 pwd = os.path.dirname(os.path.abspath(__file__))
 
 MODEL = "yolov8l.pt"
-DATASET = "rivendale_v5"
+DATASET = "plant_diseases"
 OUTPUT_DIR = "runs/train"
 
 def train_yolov8(
     model_cfg: str = os.path.join(pwd, "models", MODEL),
     data_cfg:  str = os.path.join(pwd, "datasets", DATASET, "data.yaml"),
     project:   str = os.path.join(pwd, OUTPUT_DIR),
-    name:      str = "yolov8_large_rivendale_v5_2",
+    name:      str = "yolov8_large_plant_diseases",
 ):
 
     model = YOLO(model=model_cfg)
@@ -24,31 +24,32 @@ def train_yolov8(
     model.train(
         data        = data_cfg,
         epochs      = 200,
-        imgsz       = (1088, 1440),
+        # imgsz       = (1088, 1440),
         # imgsz       = (216, 409), # For Ximea camera (demosaic)
         # imgsz       = (1088, 2048), # For Ximea camera
+        imgsz       = 416,
         batch       = 2,
         patience    = 200,
         lr0         = 0.01,
         lrf         = 0.01,
         # dropout     = 0.2,  # Increase dropout to prevent overfitting
         augment     = True,
-        hsv_h       = 0.0,  # Hue augmentation
-        hsv_s       = 0.0,    # Saturation augmentation  
-        hsv_v       = 0.0,    # Value augmentation
+        hsv_h       = 0.015,  # Hue augmentation
+        hsv_s       = 0.7,    # Saturation augmentation
+        hsv_v       = 0.4,    # Value augmentation
         degrees     = 15.0,   # Random rotation
         translate   = 0.1,    # Random translation
         scale       = 0.5,    # Random scaling
-        # shear       = 2.0,    # Random shear
-        # perspective = 0.0002, # Perspective transformation
+        shear       = 2.0,    # Random shear
+        perspective = 0.0002, # Perspective transformation
         flipud      = 0.0,    # Vertical flip probability
         fliplr      = 0.5,    # Horizontal flip probability
         mosaic      = 0.0,    # Keep mosaic augmentation
-        # mixup       = 0.15,   # Add mixup augmentation
-        # copy_paste  = 0.3,    # Add copy-paste augmentation
+        mixup       = 0.15,   # Add mixup augmentation
+        copy_paste  = 0.3,    # Add copy-paste augmentation
         # Regularization parameters
-        # weight_decay = 0.0005, # L2 regularization
-        # warmup_epochs = 3.0,   # Gradual learning rate warmup
+        weight_decay = 0.0005, # L2 regularization
+        warmup_epochs = 3.0,   # Gradual learning rate warmup
         cos_lr      = True,    # Cosine learning rate scheduler
         project     = project,
         name        = name,
