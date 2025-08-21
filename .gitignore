@@ -6,3 +6,4 @@ rivendale_v4*
 .vscode
 __pycache__/
 .env
+datasets

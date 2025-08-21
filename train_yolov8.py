@@ -1,17 +1,25 @@
 #!/usr/bin/env python3
+import os
 import torch
 from ultralytics import YOLO
 import ultralytics.nn
 from torch.nn.modules.container import Sequential
 
+pwd = os.path.dirname(os.path.abspath(__file__))
+
+MODEL = "yolov8l.pt"
+DATASET = "rivendale_v5"
+OUTPUT_DIR = "runs/train"
+
 def train_yolov8(
-    model_cfg: str = "yolov8l.pt",
-    data_cfg:  str = "rivendale_v4_remapped/data.yaml",
-    project:   str = "runs/train",
-    name:      str = "yolov8_large_rivendale_v4_remapped2",
+    model_cfg: str = os.path.join(pwd, "models", MODEL),
+    data_cfg:  str = os.path.join(pwd, "datasets", DATASET, "data.yaml"),
+    project:   str = os.path.join(pwd, OUTPUT_DIR),
+    name:      str = "yolov8_large_rivendale_v5_2",
 ):
-    # model = YOLO(model_cfg)
-    model = YOLO(f"runs/train/{name}/weights/last.pt")
+
+    model = YOLO(model=model_cfg)
+    # model = YOLO(f"runs/train/{name}/weights/last.pt")
 
     model.train(
         data        = data_cfg,
@@ -25,17 +33,17 @@ def train_yolov8(
         lrf         = 0.01,
         # dropout     = 0.2,  # Increase dropout to prevent overfitting
         augment     = True,
-        # hsv_h       = 0.015,  # Hue augmentation
-        # hsv_s       = 0.7,    # Saturation augmentation  
-        # hsv_v       = 0.4,    # Value augmentation
+        hsv_h       = 0.0,  # Hue augmentation
+        hsv_s       = 0.0,    # Saturation augmentation  
+        hsv_v       = 0.0,    # Value augmentation
         degrees     = 15.0,   # Random rotation
         translate   = 0.1,    # Random translation
         scale       = 0.5,    # Random scaling
-        shear       = 2.0,    # Random shear
+        # shear       = 2.0,    # Random shear
         # perspective = 0.0002, # Perspective transformation
         flipud      = 0.0,    # Vertical flip probability
         fliplr      = 0.5,    # Horizontal flip probability
-        # mosaic      = 1.0,    # Keep mosaic augmentation
+        mosaic      = 0.0,    # Keep mosaic augmentation
         # mixup       = 0.15,   # Add mixup augmentation
         # copy_paste  = 0.3,    # Add copy-paste augmentation
         # Regularization parameters
@@ -45,13 +53,17 @@ def train_yolov8(
         project     = project,
         name        = name,
         exist_ok    = True,
-        resume      = True,
+        # resume      = True,
         plots       = True,
 
-        iou         = 0.6,
-        conf        = 0.1,
+        iou         = 0.3,
+        conf        = 0.25,
         nms         = True
     )
 
 if __name__ == "__main__":
+    # Change to the dataset directory
+    os.chdir(os.path.join(pwd, "datasets", DATASET))
+    print(os.getcwd())
+
     train_yolov8()
