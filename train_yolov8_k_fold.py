@@ -47,7 +47,7 @@ RUN_NAME        = "yolov8_large_rivendale_v5_k"          # base name; script app
 # Training knobs (match your style)
 EPOCHS          = 100
 IMGSZ           = (1088, 1440)
-BATCH           = 2
+BATCH           = -1
 PATIENCE        = 20
 LR0             = 0.01
 LRF             = 0.01
