@@ -8,18 +8,18 @@ from torch.nn.modules.container import Sequential
 pwd = os.path.dirname(os.path.abspath(__file__))
 
 MODEL = "yolov8l.pt"
-DATASET = "rivendale_v5_masked"
+DATASET = "rivendale_v5"
 OUTPUT_DIR = "runs/train"
 
 def train_yolov8(
     model_cfg: str = os.path.join(pwd, "models", MODEL),
     data_cfg:  str = os.path.join(pwd, "datasets", DATASET, "data.yaml"),
     project:   str = os.path.join(pwd, OUTPUT_DIR),
-    name:      str = "yolov8_large_rivendale_v5_masked",
+    name:      str = "yolov8_large_rivendale_v5_transfer_learning",
 ):
 
-    model = YOLO(model=model_cfg)
-    # model = YOLO(f"runs/train/{name}/weights/last.pt")
+    # model = YOLO(model=model_cfg)
+    model = YOLO(os.path.join(pwd, "runs/train/yolov8_large_plant_diseases/weights/best.pt"))
 
     model.train(
         data        = data_cfg,
@@ -27,7 +27,7 @@ def train_yolov8(
         imgsz       = (1088, 1440),
         # imgsz       = (216, 409), # For Ximea camera (demosaic)
         # imgsz       = (1088, 2048), # For Ximea camera
-        batch       = 2,
+        batch       = -1,
         patience    = 200,
         lr0         = 0.01,
         lrf         = 0.01,
