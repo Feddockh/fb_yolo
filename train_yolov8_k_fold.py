@@ -35,14 +35,15 @@ from ultralytics import YOLO
 # ========================
 # CONFIG (edit these)
 # ========================
-DATASET_DIR     = "datasets"
+pwd = os.path.dirname(os.path.abspath(__file__))
+
+DATASET_DIR     = os.path.join(pwd, "datasets")
 ROOT_DIR        = os.path.join(DATASET_DIR, "rivendale_v5_k_fold")  # contains images/, labels/, folds/
-FOLDS_DIR       = "folds"                                # relative to ROOT_DIR
-BASE_DATA_YAML  = os.path.join(ROOT_DIR, "data.yaml")    # must contain your 'names' list
-MODEL_DIR       = "models"
-MODEL_CFG       = os.path.join(MODEL_DIR, "yolov8l.pt")  # or a custom .pt/.yaml
-PROJECT         = "runs/train"                           # Ultralytics project dir
-RUN_NAME        = "yolov8_large_rivendale_v5_k"          # base name; script appends _foldX
+FOLDS_DIR       = "folds"                                    # relative to ROOT_DIR
+BASE_DATA_YAML  = os.path.join(ROOT_DIR, "data.yaml")        # must contain your 'names' list
+MODEL_CFG       = os.path.join(pwd, "models", "yolov8l.pt")  # or a custom .pt/.yaml
+PROJECT         = os.path.join(pwd, "runs/train")            # Ultralytics project dir
+RUN_NAME        = "yolov8_large_rivendale_v5_k"              # base name; script appends _foldX
 
 # Training knobs (match your style)
 EPOCHS          = 100
@@ -85,26 +86,64 @@ VERBOSE         = True
 # Helpers
 # ========================
 
+# ========================
+# Helpers
+# ========================
+
 def load_names_from_base_yaml(path: str) -> List[str]:
+    import yaml
     with open(path, "r") as f:
         d = yaml.safe_load(f)
     names = d.get("names")
     if names is None:
         raise ValueError(f"'names' not found in {path}. Provide class names.")
-    # normalize to list
     if isinstance(names, dict):
-        # {0:'class0', 1:'class1', ...} → order by key
-        names = [names[k] for k in sorted(names.keys())]
+        names = [names[k] for k in sorted(names.keys(), key=lambda x: int(x))]
     return list(names)
 
-
-def build_data_yaml(train_txt: str, val_txt: str, names: List[str]) -> Dict:
-    return {
+def build_data_yaml(train_txt: str, val_txt: str, names: List[str], base_path: Optional[str] = None) -> Dict:
+    """
+    NOTE: 'path' here is not relied upon by YOLO for lines *inside* list files.
+    We still include it for completeness, but we ensure list files have absolute lines.
+    """
+    d = {
         "train": train_txt,
         "val": val_txt,
         "names": names,
     }
+    if base_path is not None:
+        d["path"] = base_path  # harmless, useful if you ever point to dirs instead of TXT
+    return d
 
+def _rewrite_list_to_absolute(src_txt: Path, dataset_root: Path, dst_txt: Path) -> None:
+    """
+    Read each line from src_txt (e.g., 'images/foo.png') and write an ABSOLUTE path
+    rooted at dataset_root. Skips empty/comment lines.
+    """
+    lines_out = []
+    with open(src_txt, "r") as f:
+        for raw in f:
+            line = raw.strip()
+            if not line or line.startswith("#"):
+                continue
+            p = Path(line)
+            if not p.is_absolute():
+                p = dataset_root / line
+            lines_out.append(str(p.resolve()))
+    dst_txt.write_text("\n".join(lines_out) + "\n")
+
+def _quick_sanity(img_list_txt: Path) -> None:
+    """
+    Optional: print a couple of lines to verify the absolute rewrite worked.
+    """
+    try:
+        with open(img_list_txt, "r") as f:
+            sample = [next(f).strip() for _ in range(3)]
+        print(f"Sanity sample from {img_list_txt.name}:")
+        for s in sample:
+            print("  ", s)
+    except StopIteration:
+        print(f"{img_list_txt.name} appears empty.")
 
 def discover_folds(root: str, folds_rel: str) -> List[Path]:
     folds_root = Path(root) / folds_rel
@@ -118,7 +157,6 @@ def discover_folds(root: str, folds_rel: str) -> List[Path]:
     if not candidates:
         raise RuntimeError(f"No folds found under {folds_root} (expect fold_x/train.txt & val.txt).")
     return candidates
-
 
 def read_last_row_csv(csv_path: Path) -> Optional[Dict[str, str]]:
     if not csv_path.exists():
@@ -144,21 +182,29 @@ def train_kfold_yolov8():
     print(f"Found {len(folds)} folds in {root / FOLDS_DIR}\n")
 
     for idx, fold_dir in enumerate(folds, start=1):
-        train_txt = str((fold_dir / "train.txt").resolve())
-        val_txt   = str((fold_dir / "val.txt").resolve())
+        train_txt_rel = (fold_dir / "train.txt").resolve()
+        val_txt_rel   = (fold_dir / "val.txt").resolve()
 
-        # Create a per-fold data.yaml alongside the fold
+        # Create absolute-path list files per fold
+        train_txt_abs = fold_dir / "train_abs.txt"
+        val_txt_abs   = fold_dir / "val_abs.txt"
+        _rewrite_list_to_absolute(train_txt_rel, root, train_txt_abs)
+        _rewrite_list_to_absolute(val_txt_rel, root, val_txt_abs)
+
+        # (optional) quick peek
+        _quick_sanity(train_txt_abs)
+
+        # Create per-fold data.yaml
         data_yaml_path = fold_dir / "data_fold.yaml"
-        data_dict = build_data_yaml(train_txt, val_txt, names)
+        data_dict = build_data_yaml(str(train_txt_abs), str(val_txt_abs), names, base_path=str(root))
         with open(data_yaml_path, "w") as f:
             yaml.safe_dump(data_dict, f, sort_keys=False)
 
         run_name = f"{RUN_NAME}_fold{idx}"
         print(f"=== Training {run_name} ===")
-        print(f"train: {train_txt}")
-        print(f"val:   {val_txt}")
+        print(f"train list: {train_txt_abs}")
+        print(f"val list:   {val_txt_abs}")
 
-        # Fresh model per fold (start from the same base weights)
         model = YOLO(MODEL_CFG)
 
         model.train(
@@ -169,9 +215,9 @@ def train_kfold_yolov8():
             patience=PATIENCE,
             lr0=LR0,
             lrf=LRF,
-            # dropout=DROPOUT,
+            dropout=DROPOUT,
             augment=AUGMENT,
-            # hsv_h=HSV_H, hsv_s=HSV_S, hsv_v=HSV_V,
+            hsv_h=HSV_H, hsv_s=HSV_S, hsv_v=HSV_V,
             degrees=DEGREES,
             translate=TRANSLATE,
             scale=SCALE,
@@ -179,7 +225,7 @@ def train_kfold_yolov8():
             perspective=PERSPECTIVE,
             flipud=FLIPUD,
             fliplr=FLIPLR,
-            # mosaic=MOSAIC,
+            mosaic=MOSAIC,
             # mixup=MIXUP,
             # weight_decay=WEIGHT_DECAY,
             warmup_epochs=WARMUP_EPOCHS,
@@ -249,4 +295,6 @@ def train_kfold_yolov8():
 
 
 if __name__ == "__main__":
+    os.chdir(ROOT_DIR)
+
     train_kfold_yolov8()
