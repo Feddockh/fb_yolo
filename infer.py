@@ -80,8 +80,8 @@ if __name__ == "__main__":
     p.add_argument("--img", type=str, required=True, help="Path to input image")
     p.add_argument("--weights", type=str, default="runs/train/yolov8_fireblight_large_remapped/weights/best.pt",
                    help="Path to model weights (best.pt)")
-    p.add_argument("--conf", type=float, default=0.25, help="Confidence threshold")
-    p.add_argument("--iou", type=float, default=0.45, help="NMS IoU threshold")
+    p.add_argument("--conf", type=float, default=0.1, help="Confidence threshold")
+    p.add_argument("--iou", type=float, default=0.3, help="NMS IoU threshold")
     p.add_argument("--use_key", type=bool, default=True, help="Use key for inference")
     args = p.parse_args()
 

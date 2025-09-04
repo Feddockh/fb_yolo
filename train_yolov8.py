@@ -8,18 +8,18 @@ from torch.nn.modules.container import Sequential
 pwd = os.path.dirname(os.path.abspath(__file__))
 
 MODEL = "yolov8l.pt"
-DATASET = "rivendale_v5"
+DATASET = "rivendale_v5_masked"
 OUTPUT_DIR = "runs/train"
 
 def train_yolov8(
     model_cfg: str = os.path.join(pwd, "models", MODEL),
     data_cfg:  str = os.path.join(pwd, "datasets", DATASET, "data.yaml"),
     project:   str = os.path.join(pwd, OUTPUT_DIR),
-    name:      str = "yolov8_large_rivendale_v5_transfer_learning",
+    name:      str = "yolov8_large_rivendale_v5_masked",
 ):
 
-    # model = YOLO(model=model_cfg)
-    model = YOLO(os.path.join(pwd, "runs/train/yolov8_large_plant_diseases/weights/best.pt"))
+    model = YOLO(model=model_cfg)
+    # model = YOLO(os.path.join(pwd, "runs/train/yolov8_large_plant_diseases/weights/best.pt"))
 
     model.train(
         data        = data_cfg,

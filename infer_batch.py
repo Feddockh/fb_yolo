@@ -130,8 +130,8 @@ if __name__ == "__main__":
     p.add_argument("--out_dir", type=str, required=True, help="Path to output directory for combined images")
     p.add_argument("--weights", type=str, default="runs/train/yolov8_fireblight_large_remapped/weights/best.pt",
                    help="Path to model weights (best.pt)")
-    p.add_argument("--conf", type=float, default=0.25, help="Confidence threshold")
-    p.add_argument("--iou", type=float, default=0.5, help="NMS IoU threshold")
+    p.add_argument("--conf", type=float, default=0.1, help="Confidence threshold")
+    p.add_argument("--iou", type=float, default=0.3, help="NMS IoU threshold")
     args = p.parse_args()
 
     os.makedirs(args.out_dir, exist_ok=True)

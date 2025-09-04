@@ -8,14 +8,14 @@ from torch.nn.modules.container import Sequential\
 pwd = os.path.dirname(os.path.abspath(__file__))
 
 MODEL = "yolov8l.pt"
-DATASET = "rivendale_v5"
+DATASET = "rivendale_v5_k_fold_v2"
 OUTPUT_DIR = "runs/detect"
 
 def validate_yolov8(
-    model_cfg: str = os.path.join(pwd, "runs", "train", "yolov8_large_rivendale_v5", "weights", "best.pt"),
+    model_cfg: str = os.path.join(pwd, "runs", "train", "yolov8_large_rivendale_v5_k_v2_fold4", "weights", "best.pt"),
     data_cfg:  str = os.path.join(pwd, "datasets", DATASET, "data.yaml"),
     project:   str = os.path.join(pwd, OUTPUT_DIR),
-    name:      str = "yolov8_large_rivendale_v5"
+    name:      str = "yolov8_large_rivendale_v5_k_v2_fold4"
 ):
     model = YOLO(model_cfg)
 
@@ -23,9 +23,9 @@ def validate_yolov8(
     model.val(
         data        = data_cfg,
         imgsz       = (1088, 1440),
-        batch       = 2,
-        workers     = 8,
-        conf        = 0.25,   # NMS confidence threshold
+        batch       = 1,
+        workers     = 1,
+        conf        = 0.1,   # NMS confidence threshold
         iou         = 0.3,   # NMS IoU threshold
         max_det     = 300,    # Max detections per image
         agnostic_nms= False,  # Per-class NMS
