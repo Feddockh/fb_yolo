@@ -267,7 +267,7 @@ if __name__ == "__main__":
     DATASET = "rivendale_v5_k_fold_v2"
     DATA_CFG = os.path.join(pwd, "datasets", DATASET, "data.yaml")
     OUTPUT_DIR = os.path.join(pwd, "runs", "detect")
-    NAME = "yolov8_large_rivendale_v5_k_v2_fold5_custom_validator"
+    NAME = "yolov8_large_rivendale_v5_k_v2_fold5_map0.5"
 
     # match your path setup
     os.chdir(os.path.join(pwd, "datasets", DATASET))
@@ -288,7 +288,7 @@ if __name__ == "__main__":
         plots=True,
         save_json=False,
         verbose=True,
-        map_min=0.30,    # e.g., 0.30 if you want to start mAP at 0.30
+        map_min=0.50,    # e.g., 0.30 if you want to start mAP at 0.30
         map_max=0.95,
-        viz_k=-1,        # 0: none, -1: all, >0: first K
+        viz_k=50,        # 0: none, -1: all, >0: first K
     )

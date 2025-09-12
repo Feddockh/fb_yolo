@@ -38,16 +38,17 @@ from ultralytics import YOLO
 pwd = os.path.dirname(os.path.abspath(__file__))
 
 DATASET_DIR     = os.path.join(pwd, "datasets")
-ROOT_DIR        = os.path.join(DATASET_DIR, "rivendale_v5_k_fold")  # contains images/, labels/, folds/
+ROOT_DIR        = os.path.join(DATASET_DIR, "rivendale_v6_ximea_k_fold")  # contains images/, labels/, folds/
 FOLDS_DIR       = "folds"                                    # relative to ROOT_DIR
 BASE_DATA_YAML  = os.path.join(ROOT_DIR, "data.yaml")        # must contain your 'names' list
 MODEL_CFG       = os.path.join(pwd, "models", "yolov8l.pt")  # or a custom .pt/.yaml
 PROJECT         = os.path.join(pwd, "runs/train")            # Ultralytics project dir
-RUN_NAME        = "yolov8_large_rivendale_v5_k"              # base name; script appends _foldX
+RUN_NAME        = "yolov8_large_rivendale_v6_ximea_k"              # base name; script appends _foldX
 
 # Training knobs (match your style)
 EPOCHS          = 100
-IMGSZ           = (1088, 1440)
+# IMGSZ           = (1088, 1440)
+IMGSZ           = (216, 409)
 BATCH           = -1
 PATIENCE        = 20
 LR0             = 0.01
