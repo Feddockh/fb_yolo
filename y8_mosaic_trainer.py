@@ -270,7 +270,7 @@ class YOLOMosaic(MosaicModel):
             "detect": {
                 "model": DetectionModelMosaic,
                 "trainer": Mosaic25Trainer,
-                "validator": yolo.detect.DetectionValidator,
+                "validator": Mosaic25Validator,
                 "predictor": yolo.detect.DetectionPredictor,
             },
         }
@@ -382,7 +382,7 @@ class Mosaic25Validator(DetectionValidator):
         )
 
     def build_dataset(self, img_path, mode = "val", batch = None):
-        gs = max(int(de_parallel(self.model).stride.max() if self.model else 0), 32)
+        # gs = max(int(de_parallel(self.model).stride.max() if self.model else 0), 32)
         cfg = self.args
         
         return YOLOMosaicDetDataset(
@@ -394,7 +394,7 @@ class Mosaic25Validator(DetectionValidator):
             rect=cfg.rect or False,  # rectangular batches
             cache=cfg.cache or None,
             single_cls=cfg.single_cls or False,
-            stride=int(gs),
+            stride=self.stride,
             pad=0.0 if mode == "train" else 0.5,
             prefix=colorstr(f"{mode}: "),
             task=cfg.task,
