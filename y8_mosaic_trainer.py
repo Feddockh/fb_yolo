@@ -560,7 +560,7 @@ def main():
             USING_BANDS = [int(x) for x in s.split(",") if x.strip()]
 
     LOGGER.info(f"Using bands: {USING_BANDS} (total {len(USING_BANDS)})")
-    args.name = f"yolov8_{len(USING_BANDS)}_band_input_experiment"
+    # args.name = f"yolov8_{len(USING_BANDS)}_band_input_experiment"
 
     # Ultralytics datasets often expect a single imgsz scalar internally;
     # keep imgsz_h/imgsz_w for the trainer override but provide imgsz as max for internal use.

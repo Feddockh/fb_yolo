@@ -9,11 +9,11 @@ from y8_mosaic_trainer import YOLOMosaic, MosaicModel, DetectionModelMosaic, Mos
 
 pwd = os.path.dirname(os.path.abspath(__file__))
 
-MODEL = "yolov8l_25_band_input_experiment"
+MODEL = "yolov8n_836824926_band_input_experiment"
 DATASET = "rivendale_v6_ximea_bandgate"
 OUTPUT_DIR = "runs/detect"
-# BANDS = [806, 757, 793]
-BANDS = BANDWIDTHS.ravel().tolist()
+BANDS = [836, 824, 926]
+# BANDS = BANDWIDTHS.ravel().tolist()
 
 def validate_yolov8(
     model_cfg: str = os.path.join(pwd, "runs", "train", f"{MODEL}", "weights", "best.pt"),
