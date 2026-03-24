@@ -159,7 +159,7 @@ def infer_image(
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
     p.add_argument("--img", type=str, required=True, help="Path to input image")
-    p.add_argument("--weights", type=str, default="runs/train/yolov8_fireblight_large_remapped/weights/best.pt",
+    p.add_argument("--weights", type=str, default="/home/hayden/cmu/kantor_lab/fb_models/fb_yolo/runs/train/yolov8_large_rivendale_v6_k_fold/yolov8_large_rivendale_v6_k_fold4/weights/best.pt",
                    help="Path to model weights (best.pt)")
     p.add_argument("--conf", type=float, default=0.1, help="Confidence threshold")
     p.add_argument("--iou", type=float, default=0.1, help="NMS IoU threshold")

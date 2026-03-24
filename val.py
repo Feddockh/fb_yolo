@@ -7,8 +7,8 @@ from torch.nn.modules.container import Sequential
 
 pwd = os.path.dirname(os.path.abspath(__file__))
 
-MODEL = "yolov8_large_rivendale_v6_k_fold1"
-DATASET = "rivendale_v6_k_fold"
+MODEL = "yolo26_large_penn_state_rivendale_seg"
+DATASET = "penn_state_rivendale_seg"
 OUTPUT_DIR = "runs/detect"
 
 def validate_yolov8(
